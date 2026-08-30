@@ -1,22 +1,43 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "mailifica"
 version = "1.0.0"
-authors = [
-  { name="Mailifica", email="team@mailifica.com" },
-]
 description = "Official Python SDK for Mailifica Email Infrastructure"
 readme = "README.md"
+authors = [
+  { name = "Mailifica", email = "team@mailifica.com" }
+]
+license = { text = "MIT" }
 requires-python = ">=3.8"
 dependencies = [
   "requests>=2.28.0",
   "typing-extensions>=4.0.0;python_version<'3.10'",
 ]
+keywords = ["email", "transactional-email", "mailifica", "sdk", "api"]
 classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     "Operating System :: OS Independent",
 ]
+
+[project.urls]
+Homepage = "https://mailifica.com"
+Documentation = "https://mailifica.com/docs"
+Repository = "https://github.com/mailifica/mailifica-python"
+"Bug Tracker" = "https://github.com/mailifica/mailifica-python/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mailifica*"]
+
+[tool.setuptools.package-data]
+mailifica = ["py.typed"]
