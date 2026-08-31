@@ -33,11 +33,11 @@ class Emails:
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key
 
-    def send(self, params: Union[SendParams, Dict[str, Any]]) -> Dict[str, Any]:
-        return Emails.send_email(params, api_key=self.api_key)
+    def send(self, params: Union[SendParams, Dict[str, Any]], api_key: Optional[str] = None) -> Dict[str, Any]:
+        return Emails.send_email(params, api_key=api_key or self.api_key)
 
-    def get(self, email_id: str) -> Dict[str, Any]:
-        return Emails.get_email(email_id, api_key=self.api_key)
+    def get(self, email_id: str, api_key: Optional[str] = None) -> Dict[str, Any]:
+        return Emails.get_email(email_id, api_key=api_key or self.api_key)
 
     @classmethod
     def send_email(cls, params: Union[SendParams, Dict[str, Any]], api_key: Optional[str] = None) -> Dict[str, Any]:
@@ -49,8 +49,10 @@ class Emails:
         elif "from_" in payload:
             payload["from"] = payload.pop("from_")
 
-        if isinstance(payload.get("to"), str):
-            payload["to"] = [payload["to"]]
+        if isinstance(payload.get("to"), list):
+            payload["to"] = payload["to"][0] if payload["to"] else ""
+        if isinstance(payload.get("reply_to"), list):
+            payload["reply_to"] = payload["reply_to"][0] if payload["reply_to"] else ""
         if isinstance(payload.get("cc"), str):
             payload["cc"] = [payload["cc"]]
         if isinstance(payload.get("bcc"), str):
@@ -58,11 +60,6 @@ class Emails:
 
         return HttpClient.request("POST", "/emails", params=payload, api_key=api_key)
 
-    # Class-level static aliases (Resend syntax: resend.Emails.send(...))
     @classmethod
-    def send(cls, params: Union[SendParams, Dict[str, Any]], api_key: Optional[str] = None) -> Dict[str, Any]:
-        return cls.send_email(params, api_key=api_key)
-
-    @classmethod
-    def get(cls, email_id: str, api_key: Optional[str] = None) -> Dict[str, Any]:
+    def get_email(cls, email_id: str, api_key: Optional[str] = None) -> Dict[str, Any]:
         return HttpClient.request("GET", f"/emails/{email_id}", api_key=api_key)
