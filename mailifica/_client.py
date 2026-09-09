@@ -11,6 +11,16 @@ from mailifica.errors import (
 
 DEFAULT_BASE_URL = "https://api.mailifica.com/v1"
 
+class class_or_instancemethod:
+    def __init__(self, fn):
+        self.fn = fn
+
+    def __get__(self, instance, owner=None):
+        target = instance if instance is not None else owner
+        def wrapper(*args, **kwargs):
+            return self.fn(target, *args, **kwargs)
+        return wrapper
+
 class HttpClient:
     @staticmethod
     def get_api_key(api_key: Optional[str] = None) -> str:

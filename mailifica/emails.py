@@ -1,6 +1,6 @@
 from typing import Any, Dict, List, Optional, Union
 from typing_extensions import TypedDict
-from mailifica._client import HttpClient
+from mailifica._client import HttpClient, class_or_instancemethod
 
 class Tag(TypedDict, total=False):
     name: str
@@ -33,11 +33,19 @@ class Emails:
     def __init__(self, api_key: Optional[str] = None):
         self.api_key = api_key
 
-    def send(self, params: Union[SendParams, Dict[str, Any]], api_key: Optional[str] = None) -> Dict[str, Any]:
-        return Emails.send_email(params, api_key=api_key or self.api_key)
+    @class_or_instancemethod
+    def send(self_or_cls, params: Union[SendParams, Dict[str, Any]], api_key: Optional[str] = None) -> Dict[str, Any]:
+        key = api_key
+        if isinstance(self_or_cls, Emails):
+            key = key or self_or_cls.api_key
+        return Emails.send_email(params, api_key=key)
 
-    def get(self, email_id: str, api_key: Optional[str] = None) -> Dict[str, Any]:
-        return Emails.get_email(email_id, api_key=api_key or self.api_key)
+    @class_or_instancemethod
+    def get(self_or_cls, email_id: str, api_key: Optional[str] = None) -> Dict[str, Any]:
+        key = api_key
+        if isinstance(self_or_cls, Emails):
+            key = key or self_or_cls.api_key
+        return Emails.get_email(email_id, api_key=key)
 
     @classmethod
     def send_email(cls, params: Union[SendParams, Dict[str, Any]], api_key: Optional[str] = None) -> Dict[str, Any]:
